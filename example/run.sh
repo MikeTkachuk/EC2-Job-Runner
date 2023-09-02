@@ -1,8 +1,4 @@
+python example/script.py --bucket_name "$1" --run_prefix "$2" || :
 cd ~
-conda activate foo_env
-cd foo
-python  || :
-cd ~
-rm -r checkpoints
-rm -r Brawl_iris
-echo "Removed repo dir and chkpt"
+rm -r "$2"
+echo "Removed run dir"

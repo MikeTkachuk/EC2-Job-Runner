@@ -11,7 +11,7 @@ class LogListener:
      Then invokes log_func as log_func(json.loads(file_contents), step=step, name=name)
     """
 
-    def __init__(self, log_func, path_to_listen: str, bucket_name: str, storage_client, name=None):
+    def __init__(self, log_func, path_to_listen: str, bucket_name: str, storage_client=None, name=None):
         self.path_to_listen = path_to_listen
         self.bucket_name = bucket_name
         self.interval = 10
@@ -39,6 +39,8 @@ class LogListener:
         self._thread = Thread(target=self._listen, args=())
         if storage_client is not None:
             self.storage_client = storage_client
+        if self.storage_client is None:
+            raise RuntimeError("Storage client was never provided")
         if step is not None:
             self._counter = step
         print(f'aws.logger.LogListener: listening {self.path_to_listen}. init at step {self._counter}')

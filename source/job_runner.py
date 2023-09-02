@@ -68,8 +68,8 @@ class JobRunner:
             logger.init(s3_client)
         self.upload_code(self.repo_root, ignore_patterns=self.ignore_patterns)
 
-    def run(self):
-        self.init_job()  # TODO move code download and unzip here
+    def run(self, auto_setup=True):
+        self.init_job()
         with self.instance_context:
             self.instance_context.connect(self.ssh_file_path)
             if self.loggers is not None:
@@ -77,6 +77,16 @@ class JobRunner:
                     logger.start()
             try:
                 time.sleep(5)  # prevents unfinished initializations
+                if auto_setup:
+                    self.instance_context.exec_command(
+                        f'aws s3 cp s3://{self.bucket_name}/{self.run_prefix} ~/{self.run_prefix} --recursive --quiet',
+                        quiet=True
+                    )
+                    self.instance_context.exec_command(
+                        f"unzip -q ~/{self.run_prefix}/{self.repo_root.name}.zip "
+                        f"-d ~/{self.run_prefix}/{self.repo_root.name}",
+                        quiet=True
+                    )
                 for command in self.commands:
                     self.instance_context.exec_command(command)
             finally:
