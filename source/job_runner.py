@@ -69,7 +69,7 @@ class JobRunner:
         self.upload_code(self.repo_root, ignore_patterns=self.ignore_patterns)
 
     def run(self):
-        self.init_job()
+        self.init_job()  # TODO move code download and unzip here
         with self.instance_context:
             self.instance_context.connect(self.ssh_file_path)
             if self.loggers is not None:
