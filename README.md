@@ -6,4 +6,8 @@ With this repo you are able to:
 - stream instance stdout to python stdout
 - listen for log files on s3 and manage the jobs as necessary
   
-Refer to a minimal example in ```example``` for more details
+A simplified communication diagram:  
+  
+  <img src="assets/diagram.png" width="60%"/>
+
+Please, refer to a minimal example in ```example``` for more details
