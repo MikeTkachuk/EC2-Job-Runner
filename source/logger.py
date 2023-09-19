@@ -1,17 +1,24 @@
 import time
 from io import BytesIO
 from threading import Thread, Event
+from typing import Any, Protocol
 
 import botocore.exceptions
 
 
+class LogFunc(Protocol):
+    def __call__(self, to_log: bytes, step: int = None, name: str = None) -> Any:
+        ...
+
+
 class LogListener:
     """
-    Tracks the change in the specified json file on cloud storage
-     Then invokes log_func as log_func(json.loads(file_contents), step=step, name=name)
+    Tracks a hash change in the specified file on cloud storage
+     Then invokes the log_func provided
     """
 
-    def __init__(self, log_func, path_to_listen: str, bucket_name: str, storage_client=None, name=None):
+    def __init__(self, log_func: LogFunc, path_to_listen: str, bucket_name: str, storage_client=None, name=None,
+                 delete_existing_file=True):
         self.path_to_listen = path_to_listen
         self.bucket_name = bucket_name
         self.interval = 10
@@ -24,8 +31,9 @@ class LogListener:
         self._ref_hash = hash('hash')
         self._counter = 1
 
-        self.storage_client.delete_object(Bucket=self.bucket_name,
-                                          Key=self.path_to_listen)  # cleanup log files from prev run
+        if delete_existing_file:
+            self.storage_client.delete_object(Bucket=self.bucket_name,
+                                              Key=self.path_to_listen)  # cleanup log files from prev run
 
     def init(self, storage_client=None, step=None):
         """

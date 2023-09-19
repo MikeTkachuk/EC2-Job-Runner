@@ -16,7 +16,7 @@ logger = LogListener(log_func, f"{run_prefix}/metrics.json", bucket_name=bucket_
 commands = [  # executes directly at an instance's terminal
     f"cd ~/{run_prefix}/{repo_root.name}",
     f"python example/script.py --bucket_name {bucket_name} --run_prefix {run_prefix}",  # plain script call
-    f"sh run.sh {bucket_name} {run_prefix}"  # same script call + cleanup
+    f"sh run.sh {bucket_name} {run_prefix}"  # same script call + dir cleanup (see the script itself)
 ]
 
 job_runner = JobRunner(
@@ -38,7 +38,9 @@ job_runner.run(auto_setup=True)
 commands = [
     f'aws s3 cp s3://{bucket_name}/{run_prefix} ~/{run_prefix} --recursive',
     f"unzip -q ~/{run_prefix}/{repo_root.name}.zip -d ~/{run_prefix}/{repo_root.name}",
-
+    f"cd ~/{run_prefix}/{repo_root.name}",
+    "sh run.sh"
 ]
+
 job_runner.commands = commands
 job_runner.run(auto_setup=False)

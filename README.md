@@ -8,6 +8,6 @@ With this repo you are able to:
   
 A simplified communication diagram:  
   
-  <img src="assets/diagram.png" width="60%"/>
+  <img src="assets/diagram.png" width="75%"/>
 
 Please, refer to a minimal example in ```example``` for more details

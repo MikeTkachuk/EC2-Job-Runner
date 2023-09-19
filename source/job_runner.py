@@ -25,10 +25,12 @@ class JobRunner:
         """
 
         :param bucket_name:
+        :param repo_root: path to the root of the job's repository. it will be uploaded
         :param run_prefix:
         :param instance_id:
         :param region_name:
         :param ssh_file_path:
+        :param ignore_patterns: list of patterns to ignore while uploading the code. e.g. ('.git/*', '.idea/*')
         :param commands: list of strings. Will be executed in the order provided.
         :param loggers: optional iterable of log listeners. starts every listener on job run.
         """
@@ -69,6 +71,11 @@ class JobRunner:
         self.upload_code(self.repo_root, ignore_patterns=self.ignore_patterns)
 
     def run(self, auto_setup=True):
+        """
+
+        :param auto_setup: Runs hard-coded commands to download and unzip dependencies
+        :return:
+        """
         self.init_job()
         with self.instance_context:
             self.instance_context.connect(self.ssh_file_path)
